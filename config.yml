@@ -1,0 +1,48 @@
+username: Karandeep Singh Dhaliwal
+first name: Karandeep
+middle name: Singh
+last name: Dhaliwal
+host machine: MacOSX
+host ip: 192.168.7.42
+knownHosts file: /Users/karandeepsinghdhaliwal/.ssh/known_hosts
+identity file: /Users/karandeepsinghdhaliwal/.ssh/id_rsa
+---
+- virtual machine name: kdhaliwal.bend
+  virtual machine ip: 192.168.0.117
+  user: root
+  password: c1rcl3
+  branch: release
+  type: local
+  logs: 
+    - name : BackEnd-Release
+      file : /opt/java/apache/tomcat/BackEnd.log
+
+    - name : Adapter B2C Transaction Log
+      file: /opt/java/apache/tomcat/Adapter.B2C.log
+
+    - name : Adapter B2B Transaction Log
+      file : /opt/java/apache/tomcat/Adapter.B2B.log
+
+    - name : Pcx Transaction Log
+      file: /opt/java/apache/tomcat/Pcx.log
+---
+- virtual machine name: kdhaliwal.fend
+  virtual machine ip: 192.168.0.117
+  user: root
+  password: c1rcl3
+  branch: release
+  type: local
+  logs: 
+    - name : BenevityClient Secure
+      file : /opt/java/apache/tomcat/BackEnd.log
+
+    - name : Adapter B2C Transaction Log
+      file: /opt/java/apache/tomcat/Adapter.B2C.log
+
+    - name : Adapter B2B Transaction Log
+      file : /opt/java/apache/tomcat/Adapter.B2B.log
+
+    - name : Pcx Transaction Log
+      file: /opt/java/apache/tomcat/Pcx.log
+            
+  
