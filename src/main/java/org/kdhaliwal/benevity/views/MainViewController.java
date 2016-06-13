@@ -8,6 +8,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.function.Predicate;
 
 import org.kdhaliwal.benevity.utility.Config;
 import org.kdhaliwal.benevity.utility.LogFiles;
@@ -30,14 +31,19 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextBuilder;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Callback;
+import javafx.collections.FXCollections;
 
 public class MainViewController implements Initializable {
     @FXML
@@ -84,6 +90,9 @@ public class MainViewController implements Initializable {
         return list;
     }
 
+    /*
+     * Inside TabPanes that contains ListView
+     */
     private List<TabPane> getSubTabPanes() throws Exception {
         List<TabPane> list = new ArrayList<TabPane>();
         for (VirtualMachine vm : config.getVm().values()) {
@@ -102,7 +111,7 @@ public class MainViewController implements Initializable {
                 // Clear Button
                 Button clearButton = new Button("Clear");
                 clearButton.setOnAction(e -> {
-                    logView.getItems().clear();
+                        logView.setItems(FXCollections.observableArrayList());
                 });
 
                 // Refresh Button
@@ -130,12 +139,11 @@ public class MainViewController implements Initializable {
                     String filter = text.getText();
                     if( filter == null || filter.length() == 0){
                         data.setPredicate(s -> true);
-                        System.out.println("A");
                     }else{
-                        data.setPredicate(s -> s.contains(filter));
+                        //it will display only searched values
+                        data.setPredicate(s -> s.toLowerCase().contains(filter.toLowerCase()));
                         logView.setItems(data);
-                        System.out.println(data);
-                        logView.setStyle("-fx-text-fill: red;");
+                        logView.refresh();
                     }
                 });
                 
