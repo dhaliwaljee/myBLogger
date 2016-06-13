@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.swing.JOptionPane;
+
 import org.kdhaliwal.benevity.utility.Config;
 import org.kdhaliwal.benevity.utility.LogFiles;
 import org.kdhaliwal.benevity.utility.VirtualMachine;
@@ -23,9 +25,12 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Side;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -33,6 +38,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class MainViewController implements Initializable{
     @FXML TabPane mainTabPane;
@@ -53,6 +59,11 @@ public class MainViewController implements Initializable{
             for(Tab tab: getParentTabs()){
                 mainTabPane.getTabs().add(tab);
             }
+            // for zooming by touchpad
+            mainTabPane.setOnZoom(e -> {
+                mainTabPane.setScaleX(mainTabPane.getScaleX() * e.getZoomFactor());
+                mainTabPane.setScaleY(mainTabPane.getScaleY() * e.getZoomFactor());
+            });
         } catch (Exception e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
@@ -80,6 +91,8 @@ public class MainViewController implements Initializable{
             for(LogFiles files: vm.getLogFiles()){
                 //System.out.println(files.getName()+" = "+files.getUrl());
                 Tab tab = new Tab(files.getName());
+                tab.setGraphic(new Label(vm.getName().toUpperCase()));
+                tab.getGraphic().setStyle("-fx-text-fill: gray");
                 
                 //Adding controls to application(log viewer)
                 
@@ -124,7 +137,25 @@ public class MainViewController implements Initializable{
                     read(logView, files.getUrl(), session);
                     pane.getTabs().add(tab);
                 }catch(JSchException ex){
-                    System.out.printf("\nConnection with [%s]: %s is not established. ", vm.getName(), vm.getIp());
+                    String message = String.format("\nConnection with [%s]: %s is not established. ", vm.getName(), vm.getIp());
+                    message += String.format("\nUser Name : %s", vm.getUserName());
+                    message += String.format("\nType : %s", vm.getType());
+                    System.out.printf("\n%s", message);
+
+                    Stage stage = new Stage(StageStyle.UTILITY);
+                    
+                    VBox vbox = new VBox(10);
+                    vbox.setPadding(new Insets(20));
+                    Label label = new Label(message);
+                    Button btnExit = new Button("OK");
+                    btnExit.setOnAction(e -> {
+                        stage.close();
+                    });
+                    vbox.getChildren().addAll(label, btnExit);
+                    
+                    System.out.println(message.length());
+                    stage.setScene(new Scene(vbox, label.getPrefWidth(), 200));
+                    stage.show();
                 }
             }
             pane.setSide(Side.BOTTOM);
