@@ -20,6 +20,7 @@ public class Config {
     private String hostIp;
     private String knownHostsFile;
     private String identityFile;
+    private int timeout;
     private Map<String, VirtualMachine> vm = new HashMap<String, VirtualMachine>();
     
     public void setUsername(String username) {
@@ -52,6 +53,10 @@ public class Config {
     
     public void setIdentityFile(String identityFile) {
         this.identityFile = identityFile;
+    }
+    
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
     }
     
     public void setVm(Map<String, VirtualMachine> vm) {
@@ -94,6 +99,10 @@ public class Config {
         return identityFile;
     }
     
+    public int getTimeout() {
+        return timeout;
+    }
+    
     public Map<String, VirtualMachine> getVm() {
         return vm;
     }
@@ -111,6 +120,7 @@ public class Config {
         config.setHostIp(firstNode.get("host ip"));
         config.setKnownHostsFile(firstNode.get("knownHosts file"));
         config.setIdentityFile(firstNode.get("identity file"));
+        config.setTimeout(Integer.valueOf(firstNode.get("timeout")));
         
         //Sub Nodes, its ArrayList
         while(true){

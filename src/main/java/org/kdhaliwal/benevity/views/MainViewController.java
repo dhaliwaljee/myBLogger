@@ -16,6 +16,7 @@ import org.kdhaliwal.benevity.utility.VirtualMachine;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -110,16 +111,21 @@ public class MainViewController implements Initializable{
                 //Creating Remote Connection
                 JSch jsch = new JSch();
                 Session session = jsch.getSession(vm.getUserName(), vm.getIp());
-                jsch.setKnownHosts("");
-                jsch.addIdentity("");
+                jsch.setKnownHosts(config.getKnownHostsFile());
+                jsch.addIdentity(config.getIdentityFile());
                 session.setPassword("c1rcl3");
-                session.connect();
-                //System.out.println("\n");
-                System.out.println("Session = " + session.isConnected());
-                
-                // reading log files
-                read(logView, files.getUrl(), session);
-                pane.getTabs().add(tab);
+                //System.out.println(session.getTimeout());
+                try{
+                    session.connect(config.getTimeout()*1000);
+
+                    System.out.println("Session = " + session.isConnected());
+                    
+                    // reading log files
+                    read(logView, files.getUrl(), session);
+                    pane.getTabs().add(tab);
+                }catch(JSchException ex){
+                    System.out.printf("\nConnection with [%s]: %s is not established. ", vm.getName(), vm.getIp());
+                }
             }
             pane.setSide(Side.BOTTOM);
             list.add(pane);
